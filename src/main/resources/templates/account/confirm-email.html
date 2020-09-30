@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div class="container">
+		<div class="row mt-5 justify-content-center" th:if="${isCheck}">
+			<h2>가입 인증을 완료했습니다. <span th:text="${nickname}">Nickname</span> 님 <span th:text="${count}">count</span>번째 회원이 되신 것을 환영합니다.</h2>			
+		</div>
+		<div class="row mt-5 justify-content-center" th:if="${!isCheck}">
+			<h2>잘못된 인증입니다. 다시 인증해주세요.</h2>
+			<a href="#" th:href="@{'/resend-email/' + ${nickname} }">메일 다시 보내기</a>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+</body>
+</html>

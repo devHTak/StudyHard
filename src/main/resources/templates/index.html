@@ -4,6 +4,10 @@
 <body>
 	<nav th:replace="fragments.html :: main-nav"></nav>
 	<div class="container">
+		<div th:if="${!#strings.isEmpty(emailMessage)}" class="alert alert-primary mb-1" role="alert" th:text="${emailMessage}"></div>
+		<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}"> 
+			이메일 인증을 완료하지 않았습니다. 이메일을 확인하세요. <a href="#" th:href="@{'/resend-email/' + ${account.nickname}}">인증 이메일 재전송</a>
+		</div>
 		<div class="row mt-5 justify-content-center">
 			<h2>빡공에 오신걸 환영합니다.</h2>
 		</div>

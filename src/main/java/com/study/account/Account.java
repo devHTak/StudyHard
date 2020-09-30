@@ -37,6 +37,7 @@ public class Account {
 	
 	private boolean emailVerified;
 	private LocalDateTime joinAt;
+	private LocalDateTime sendEmailAt;
 	
 	private String bio;
 	private String url;
@@ -54,8 +55,11 @@ public class Account {
 	private boolean studyUpdateByWeb;
 
 	public void generateToken() {
-		this.joinAt = LocalDateTime.now();
+		this.emailCheckTokenGeneratedAt = LocalDateTime.now();
 		this.emailCheckToken = UUID.randomUUID().toString();
 	}
-
+	
+	public boolean canSendEmail() {
+		return this.sendEmailAt.minusHours(1).isAfter(LocalDateTime.now());
+	}
 }
