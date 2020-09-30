@@ -1,0 +1,50 @@
+package com.study.account;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.study.account.form.SignUpForm;
+import com.study.account.form.SignUpFormValidator;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class AccountController {
+	
+	private final AccountService accountService;
+	private final SignUpFormValidator signUpFormValidator;
+	
+	@InitBinder("signUpForm")
+	public void initBinder(WebDataBinder binder) {
+		binder.addValidators(signUpFormValidator);
+	}
+	
+	@GetMapping("/sign-up")
+	public String signUpForm(Model model) {
+		model.addAttribute(new SignUpForm());
+		
+		return "account/sign-up";
+	}
+	
+	@PostMapping("/sign-up")
+	public String signUp(@Valid @ModelAttribute SignUpForm signUpForm, Errors error, Model model, RedirectAttributes attribute) {
+		if(error.hasErrors()) {
+			return "account/sign-up";
+		}
+		
+		Account account = accountService.signUp(signUpForm);
+		accountService.login(account);
+		return "redirect:/";
+	}
+	
+}
