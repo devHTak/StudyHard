@@ -1,10 +1,11 @@
-package com.study.main;
+package com.study.modules.main;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.study.account.Account;
+import com.study.modules.account.Account;
+import com.study.modules.account.CurrentUser;
 
 @Controller
 public class MainController {

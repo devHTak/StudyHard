@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}"> 
+		이메일 인증을 완료하지 않았습니다. 이메일을 확인하세요. <a href="#" th:href="@{'/resend-email/' + ${account.nickname}}">인증 이메일 재전송</a>
+	</div>
+	<div class="container">
+		<div class="row mt-5 justify-content-center">
+			<div class="col-2">
+				<div th:replace="fragments.html :: settings-menu(currentMenu = 'profile')"></div>
+			</div>
+			<div class="col-8">
+				<div class="alert alert-primary" role="alert" th:if="${!#strings.isEmpty(updateMsg)}" th:text="${updateMsg}">update message</div>
+				<div class="row">
+					<h1 class="display-4" th:text="${account.nickname}">Nickname</h1>
+				</div>
+				<div class="row">
+					<form class="needs-validation col-6" action="#" th:action="@{/settings/profile}" th:object="${profileForm}" method="post">
+						<div class="form-group">
+							<label for="bio">한 줄 소개</label>
+							<input type="text" placeholder="간략한 소개를 부탁합니다." id="bio" name="bio" th:field="*{bio}" class="form-control"
+								aira-describedby="bioHelper" minlength="2" maxlength="30">
+							<small id="bioHelper" class="form-text text-muted">30자 이내로 간략한 소개를 입력하세요.</small>
+							<small id="bioError" class="form-text text-danger" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}">error</small> 
+						</div>
+						<div class="form-group">
+							<label for="url">링크</label>
+							<input type="text" placeholder="https://www.studyhard.com" id="url" name="url" th:field="*{url}" class="form-control"
+								aira-describedby="urlHelper">
+							<small id="urlHelper" class="form-text text-muted">블로그, 유투브, 깃허브 주소 등 자신을 소개할 수 있는 주소를 입력해주세요.</small>
+							<small id="urlError" class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}">error</small>
+						</div>
+						<div class="form-group">
+							<label for="occupation">한 줄 소개</label>
+							<input type="text" placeholder="학생, 개발자, 기획자 등" id="occupation" name="occupation" th:field="*{occupation}" class="form-control"
+								aira-describedby="occupationHelper" minlength="2" maxlength="30">
+							<small id="occupationHelper" class="form-text text-muted">학생, 개발자 등 직업을 입력하세요.</small>
+							<small id="occupationError" class="form-text text-danger" th:if="${#fields.hasErrors('occupation')}" th:errors="*{occupation}">error</small>
+						</div>
+						<div class="form-group">
+							<label for="location">활동지역</label>
+							<input type="text" placeholder="간략한 소개를 부탁합니다." id="location" name="location" th:field="*{location}" class="form-control"
+								aira-describedby="locationHelper" minlength="2" maxlength="30">
+							<small id="locationHelper" class="form-text text-muted">30자 이내로 간략한 소개를 입력하세요.</small>
+							<small id="locationError" class="form-text text-danger" th:if="${#fields.hasErrors('location')}" th:errors="${location}">error</small>
+						</div>
+						<div class="form-group">
+							<input type="hidden" th:field="*{profileImage}" id="profileImage" name="profileImage" class="form-control">
+						</div>
+						<div class="form-group">
+							<button class="btn btn-primary btn-block">수정하기</button> 
+						</div>
+					</form>
+					<div class="col-6">
+						<div class="card text-center">
+						  	<div class="card-header">프로필 이미지 수정</div>
+						  	<div class="card-body mt-3">
+						  		<div id="newImage"></div>
+						  		<div id="oldImage">
+							    	<svg th:if="${#strings.isEmpty(account.profileImage)}" class="rounded"
+	                                     th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>
+	                                <img th:if="${!#strings.isEmpty(account.profileImage)}" class="rounded" id="oldImage"
+	                                     th:src="${account.profileImage}" width="125" height="125" alt="name" th:alt="${account.nickname}"/>
+	                            </div>
+                                <div class="custom-file mt-3">
+                                    <input type="file" class="custom-file-input" id="profileImage">
+                                    <label class="custom-file-label" for="profile-image-file">프로필 이미지 변경</label>
+                                </div>
+						  	</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+	<script type="application/javascript">
+		$(function(){
+			$('input[type=file]').change(function(e){
+				if(e.target.files.length === 1) {
+					var reader = new FileReader();
+					reader.onload = e => {
+						if(e.target.result) {
+							if(!e.target.result.startsWith("data:image")) {
+								alert('이미지 파일을 선택하세요.');
+								return;
+							}
+							// 가져온 이미지 생성
+							var img = document.createElement('img');
+							img.id = 'new-profile-image';
+							img.src = e.target.result;
+							img.setAttribute('width', '100%');
+							
+							$('#newImage').html(img);
+							$('#newImage').show();
+							$('#oldImage').hide();
+							$('#profileImage').val(e.target.result);
+						}
+					};
+					reader.readAsDataURL(e.target.files[0]);
+				}
+			})
+		});
+	</script>
+</body>
+</html>

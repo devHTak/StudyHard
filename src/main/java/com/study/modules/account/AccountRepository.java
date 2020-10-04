@@ -1,4 +1,4 @@
-package com.study.account;
+package com.study.modules.account;
 
 import java.util.Optional;
 

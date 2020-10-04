@@ -1,4 +1,4 @@
-package com.study.account;
+package com.study.modules.account;
 
 import javax.validation.Valid;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.study.account.form.SignUpForm;
-import com.study.account.form.SignUpFormValidator;
+import com.study.modules.account.form.SignUpForm;
+import com.study.modules.account.validator.SignUpFormValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,6 +73,14 @@ public class AccountController {
 		}
 		
 		return "redirect:/";
+	}
+	
+	@GetMapping("/profile/{nickname}")
+	public String profile(@CurrentUser Account account, @PathVariable String nickname, Model model) {
+		Account byNickname = accountService.findByNickname(nickname);
+		
+		model.addAttribute("account", byNickname);
+		return "account/profile";
 	}
 	
 }

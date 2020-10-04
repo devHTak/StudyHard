@@ -1,6 +1,5 @@
-package com.study.account.form;
+package com.study.modules.account.form;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
@@ -8,25 +7,21 @@ import org.hibernate.validator.constraints.Length;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 @Data
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
-public class SignUpForm {
-	
-	@NotBlank
-	@Length(min = 2, max = 20)
-	private String nickname;
-	
-	@NotBlank
-	@Email
-	private String email;
+public class PasswordForm {
 	
 	@NotBlank
 	@Length(min = 8, max = 20)
 	private String password;
+	
+	@NotBlank
+	@Length(min = 8, max = 20)
+	private String rePassword;
 
 }

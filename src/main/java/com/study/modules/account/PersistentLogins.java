@@ -1,4 +1,4 @@
-package com.study.main;
+package com.study.modules.account;
 
 import java.time.LocalDateTime;
 

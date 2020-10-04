@@ -1,4 +1,4 @@
-package com.study.config;
+package com.study.infra.config;
 
 import javax.sql.DataSource;
 
@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
-import com.study.account.AccountService;
+import com.study.modules.account.AccountService;
 
 import lombok.RequiredArgsConstructor;
 

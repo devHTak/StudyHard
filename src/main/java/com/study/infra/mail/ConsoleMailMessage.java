@@ -1,4 +1,4 @@
-package com.study.mail;
+package com.study.infra.mail;
 
 
 import java.io.InputStream;

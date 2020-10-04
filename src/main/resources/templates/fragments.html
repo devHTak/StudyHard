@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	  
+<!-- header start -->
 <head th:fragment="header">
 	<meta charset="UTF-8">
 	<title>빡공</title>
@@ -19,7 +21,9 @@
 	<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="/node_modules/jdenticon/dist/jdenticon.min.js" ></script>
 </head>
+<!-- header end -->
 <body>
+	<!-- main navigation start -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="main-nav">
   		<a class="navbar-brand" href="#" th:href="@{/}"><img class="mb-2" src="/images/logo_sm.png" alt="studyolle" width="30" height="30"> StudyHard</a>
   		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +32,7 @@
   		
   		<form class="form-inline my-2 my-lg-0" method="post" action="#" >
    			<input class="form-control mr-sm-2" type="search" placeholder="스터디 찾기" aria-label="Search">
-   			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">찾기</button>
+   			<button class="btn btn-outline-primary my-2 my-sm-0" type="submit">찾기</button>
    		</form>
 
   		<div class="collapse navbar-collapse " id="navbarSupportedContent">
@@ -68,18 +72,30 @@
 	   		</ul>
 		</div>
 	</nav>
+	<!-- main navigation end -->
 	
-	<!-- footer -->
+	<!-- profile - menu start -->
+	<div th:fragment="settings-menu(currentMenu)" class="list-group">
+		<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'profile'} ? active" href="#" th:href="@{/settings/profile}">프로필</a>
+		<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active" href="#" th:href="@{/settings/password}">패스워드</a>
+		<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notifications'} ? active" href="#" th:href="@{/settings/notification}">알림</a>
+		<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'} ? active" href="#" th:href="@{/settings/tags}">관심 주제</a>
+		<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'zone'} ? active" href="#" th:href="@{/settings/zone}">활동 지역</a>
+		<a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'account'} ? active" href="#" th:href="@{/settings/account}">계정</a>
+	</div>
+	<!-- profile - menu - end -->
+	
+	<!-- footer start -->
 	<footer th:fragment="footer" class="fixed-bottom">
 	    <div class="row justify-content-center">
 	        <img class="mb-2" src="/images/logo_sm.png" alt="studyolle" width="30" height="30">
 	        <small class="d-block mb-3 text-muted" style="margin-left:10px; margin-right:10px;">Study Hard</small> <br/>
-	        <small class="d-block mb-3 text-muted" style="margin-left:10px; margin-right:10px;">@CopyrightBy 백기선님 인프런 강좌</small> <br/>
+	        <small class="d-block mb-3 text-muted" style="margin-left:10px; margin-right:10px;">@CopyrightBy 백기선님 인프런 강좌 바탕으로 작성</small> <br/>
 	    </div>
 	</footer>
+	<!-- footer end -->
 	
-	
-	<!-- form - validation -->
+	<!-- form - validation start-->
 	<script type="application/javascript" th:fragment="form-validation">
 	    (function () {
 	        'use strict';
@@ -101,5 +117,7 @@
 	        }, false)
 	    }())
 	</script>
+	<!-- form - validation end -->
+	
 </body>
 </html>

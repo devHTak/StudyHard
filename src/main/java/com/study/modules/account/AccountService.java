@@ -1,4 +1,4 @@
-package com.study.account;
+package com.study.modules.account;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,8 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.study.account.form.SignUpForm;
-import com.study.main.UserAccount;
+import com.study.modules.account.form.SignUpForm;
 
 import lombok.RequiredArgsConstructor;
 
@@ -97,7 +96,7 @@ public class AccountService implements UserDetailsService{
 		boolean isCheck = account.getEmailCheckToken() != null && account.getEmailCheckToken().equals(token);
 		if(isCheck) {
 			account.setEmailVerified(true);
-			account.setJoinAt(LocalDateTime.now());
+			account.setJoinedAt(LocalDateTime.now());
 			this.login(account);
 		}
 		

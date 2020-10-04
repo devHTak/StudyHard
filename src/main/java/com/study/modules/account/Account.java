@@ -1,12 +1,15 @@
-package com.study.account;
+package com.study.modules.account;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,13 +39,15 @@ public class Account {
 	private String emailCheckToken;
 	
 	private boolean emailVerified;
-	private LocalDateTime joinAt;
+	private LocalDateTime joinedAt;
 	private LocalDateTime sendEmailAt;
 	
 	private String bio;
 	private String url;
 	private String occupation;
 	private String location;
+	
+	@Lob @Basic(fetch = FetchType.EAGER)
 	private String profileImage;
 	
 	private LocalDateTime emailCheckTokenGeneratedAt;
@@ -52,7 +57,7 @@ public class Account {
 	private boolean studyEnrollmentResultByEmail;
 	private boolean studyEnrollmentResultByWeb;
 	private boolean studyUpdatedByEmail;
-	private boolean studyUpdateByWeb;
+	private boolean studyUpdatedByWeb;
 
 	public void generateToken() {
 		this.emailCheckTokenGeneratedAt = LocalDateTime.now();
@@ -61,5 +66,10 @@ public class Account {
 	
 	public boolean canSendEmail() {
 		return this.sendEmailAt.minusHours(1).isAfter(LocalDateTime.now());
+	}
+	
+	public boolean isOwner(UserAccount userAccount) {
+		Account returnAccount = userAccount.getAccount();
+		return this.equals(returnAccount);
 	}
 }

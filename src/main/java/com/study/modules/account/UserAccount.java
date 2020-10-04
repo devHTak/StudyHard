@@ -1,4 +1,4 @@
-package com.study.main;
+package com.study.modules.account;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import com.study.account.Account;
 
 public class UserAccount extends User{
 	

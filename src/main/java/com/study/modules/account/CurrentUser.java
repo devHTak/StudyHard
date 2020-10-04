@@ -1,4 +1,4 @@
-package com.study.main;
+package com.study.modules.account;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
