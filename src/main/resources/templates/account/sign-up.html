@@ -16,7 +16,7 @@
                     <label for="nickname">닉네임</label>
                     <input id="nickname" name="nickname" type="text" th:field="*{nickname}" class="form-control" aria-describedby="nicknameHelp" minlength="2" maxlength="20" required>
                     <small id="nicknameHelp" class="form-text text-muted">
-                       3에서 20자 사이로 닉네임을 입력해주세요.
+                       2에서 20자 사이로 닉네임을 입력해주세요.
                     </small>
                     <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">Error</small>
                 </div>

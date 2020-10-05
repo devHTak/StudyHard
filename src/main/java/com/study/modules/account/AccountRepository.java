@@ -2,7 +2,9 @@ package com.study.modules.account;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 
 
 public interface AccountRepository extends JpaRepository<Account, Long>{
@@ -14,4 +16,10 @@ public interface AccountRepository extends JpaRepository<Account, Long>{
 	public Optional<Account> findByNickname(String nickname);
 	
 	public Optional<Account> findByEmail(String email);
+	
+	@EntityGraph(attributePaths = {"tags"}, type = EntityGraphType.LOAD)
+	public Account findAccountWithTagsById(Long id);
+	
+	@EntityGraph(attributePaths = {"zones"}, type = EntityGraphType.LOAD)
+	public Account findAccountWithZonesById(Long id);
 }

@@ -1,12 +1,19 @@
 package com.study.modules.account;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.study.modules.account.form.NicknameForm;
 import com.study.modules.account.form.NotificationForm;
 import com.study.modules.account.form.PasswordForm;
 import com.study.modules.account.form.ProfileForm;
+import com.study.modules.tag.Tag;
+import com.study.modules.tag.TagRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,6 +53,14 @@ public class SettingsService {
 		byId.setStudyEnrollmentResultByWeb(notificationForm.isStudyEnrollmentResultByWeb());
 		byId.setStudyUpdatedByWeb(notificationForm.isStudyUpdatedByWeb());
 		byId.setStudyUpdatedByEmail(notificationForm.isStudyUpdatedByEmail());
+		
+		return byId;
+	}
+	
+	public Account updateNickname(Account account, @Valid NicknameForm nicknameForm) {
+		Account byId = this.findById(account);
+		byId.setNickname(nicknameForm.getNickname());
+		
 		return byId;
 	}
 	
