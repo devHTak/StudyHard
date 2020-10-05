@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div class="container">
+		<div class="row mt-5 justify-content-center">
+			<h2>이메일로 로그인 링크 받기</h2>
+		</div>
+		<div class="row mt-2 justify-content-center">
+			<form class="needs-validation col-sm-6" action="#" th:action="@{/email-login}" th:object="${emailForm}" method="post" novalidate>
+				<div>
+					<div th:if="${!#strings.isEmpty(message)}" th:text="${message}" class="alert alert-primary" role="alert">message</div>
+					<div th:if="${!#strings.isEmpty(failMessage)}" th:text="${failMessage}" class="alert alert-danger" role="alert">message</div>
+				</div>
+                <div class="form-group">
+                    <label for="username">이메일</label>
+                    <input id="email" name="email" type="text" class="form-control" aria-describedby="usernameHelp" th:field="*{email}" required>
+                    <small class="form-text text-muted" id="usernameHelp">가입 당시 이메일을 입력하세요.</small>
+                    <small class="form-text text-danger" id="emailError" th:object="*{email}" th:if="${#fields.hasErrors('email')}">가입 당시 이메일을 입력하세요.</small>
+                </div>
+				<div class="form-group">
+                	<button class="btn btn-primary btn-block" type="submit" aria-describedby="submitHelp">전송</button>
+                </div>
+            </form>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+</body>
+</html>

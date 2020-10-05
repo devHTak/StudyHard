@@ -101,7 +101,7 @@ public class AccountControllerTest {
 	public void checkEmailTokenFailTest() throws Exception {
 		mockMvc.perform(get("/check-email-token")
 						.param("token", "test")
-						.param("nickname", "test"))
+						.param("email", "test"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(view().name("account/confirm-email"))
@@ -119,7 +119,7 @@ public class AccountControllerTest {
 		
 		mockMvc.perform(get("/check-email-token")
 						.param("token", account.getEmailCheckToken())
-						.param("nickname", account.getNickname()))
+						.param("email", account.getEmail()))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(view().name("account/confirm-email"))
@@ -129,5 +129,14 @@ public class AccountControllerTest {
 				.andExpect(authenticated().withUsername("testtest"));
 		
 		assertEquals(account.getNickname(), signUpForm.getNickname());
-	}	
+	}
+	
+	@DisplayName("이메일 로그인 폼 확인")
+	@Test
+	public void checkEmailLoginForm() throws Exception {
+		mockMvc.perform(get("/email-login"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("account/email-login"));
+	}
 }
