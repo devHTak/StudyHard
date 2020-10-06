@@ -59,7 +59,7 @@ public class AccountService implements UserDetailsService{
 		
 		this.sendEmail(account, "빡공 로그인 링크입니다.", "/login-by-email?token=" + account.getEmailCheckToken() +"&email=" + account.getEmail());
 		return true;
-	}	
+	}
 	
 	public void sendEmail(Account account, String subject, String text) {
 		// 메일 전송 시간 저장 -> 1시간에 한번씩만 전송 가능
