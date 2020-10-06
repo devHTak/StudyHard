@@ -10,7 +10,9 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -30,7 +32,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.study.modules.account.form.EmailForm;
 import com.study.modules.account.form.SignUpForm;
 
 @RunWith(SpringRunner.class)
@@ -131,12 +135,58 @@ public class AccountControllerTest {
 		assertEquals(account.getNickname(), signUpForm.getNickname());
 	}
 	
-	@DisplayName("이메일 로그인 폼 확인")
+	@DisplayName("계정 프로필 화면")
+	@Test
+	public void profileForm() throws Exception {
+		SignUpForm signUpForm = SignUpForm.builder()
+											.nickname("testtest")
+											.email("testtest@gmail.com")
+											.password("12341234").build();
+		Account account = accountService.signUp(signUpForm);
+		accountService.login(account);
+		mockMvc.perform(get("/profile/{nickname}", "testtest"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("account/profile"))
+				.andExpect(model().attributeExists("account"));
+	}
+	
+	@DisplayName("이메일 로그인 폼 화면")
 	@Test
 	public void checkEmailLoginForm() throws Exception {
 		mockMvc.perform(get("/email-login"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(view().name("account/email-login"));
+				.andExpect(view().name("account/email-login"))
+				.andExpect(model().attributeExists("emailForm"));
+	}
+	
+	@DisplayName("이메일 로그인 폼 확인 - 성공")
+	@Test
+	public void checkEmailLoginSuccess() throws Exception {
+		SignUpForm signUpForm = SignUpForm.builder()
+										.nickname("testtest")
+										.email("testtest@gmail.com")
+										.password("12341234").build();
+		Account account = accountService.signUp(signUpForm);
+		
+		mockMvc.perform(post("/email-login")
+						.param("email", account.getEmail())
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/email-login"));
+	}
+	
+	@DisplayName("이메일 로그임 폼 확인 - 실패")
+	@Test
+	public void checkEmailLoginFail() throws Exception {
+		mockMvc.perform(post("/email-login")
+						.param("email", "testtest1@gmail.com")
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("account/email-login"))
+				.andExpect(model().hasErrors());
 	}
 }
