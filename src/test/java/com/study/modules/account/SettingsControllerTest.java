@@ -1,6 +1,8 @@
 package com.study.modules.account;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -14,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -24,9 +28,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study.modules.tag.Tag;
+import com.study.modules.tag.TagForm;
+import com.study.modules.tag.TagRepository;
+import com.study.modules.tag.TagService;
+import com.study.modules.zone.Zone;
+import com.study.modules.zone.ZoneForm;
+import com.study.modules.zone.ZoneRepository;
+import com.study.modules.zone.ZoneService;
 
 @Transactional
 @RunWith(SpringRunner.class)
@@ -37,12 +52,18 @@ public class SettingsControllerTest {
 	@Autowired MockMvc mockMvc;
 	@Autowired SettingsService settingsService;
 	@Autowired AccountService accountService;
+	@Autowired TagService tagService;
+	@Autowired ZoneService zoneService;
 	@Autowired AccountRepository accountRepository;
+	@Autowired TagRepository tagRepository;
+	@Autowired ZoneRepository zoneRepository;
 	@Autowired PasswordEncoder passwordEncoder;
+	@Autowired ObjectMapper objectMapper;
 	
 	@AfterEach
 	public void afterEach() {
 		accountRepository.deleteAll();
+		tagRepository.deleteAll();
 	}
 	
 	@WithAccount(value = "testNickname")
@@ -194,14 +215,16 @@ public class SettingsControllerTest {
 				.andExpect(redirectedUrl("/settings/account"));
 		
 		Account account = accountService.findByNickname("reTestNickname");
+		assertNotEquals("testNickname", account.getNickname());
 	}
 	
 	@WithAccount(value = "testNickname")
 	@DisplayName("닉네임 변경 수정 - 실패")
 	@Test
 	public void nicknameUpdateFail() throws Exception {
+		String errorNickname = "nicknameIsToooooooooLong";
 		mockMvc.perform(post("/settings/account")
-						.param("nickname", "nicknameIsToooooooooLong")
+						.param("nickname", errorNickname)
 						.with(csrf()))
 				.andDo(print())
 				.andExpect(status().isOk())
@@ -211,6 +234,129 @@ public class SettingsControllerTest {
 				.andExpect(view().name("settings/account"));
 		
 		Account account = accountService.findByNickname("testNickname");
+		assertNotEquals(errorNickname, account.getNickname());
 	}
 
+	@WithAccount(value = "testNickname")
+	@DisplayName("태그 폼 확인")
+	@Test
+	public void tagsFormCheck() throws Exception {
+		mockMvc.perform(get("/settings/tags"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("tags"))
+				.andExpect(model().attributeExists("whitelist"))
+				.andExpect(model().attributeExists("tagForm"))
+				.andExpect(view().name("settings/tags"));
+	}
+	
+	@WithAccount(value = "testNickname")
+	@DisplayName("태그 입력 성공 확인")
+	@Test
+	public void addTagsSuccessCheck() throws Exception {
+		String title = "TDD";
+		TagForm tagForm = TagForm.builder().title(title).build();
+		
+		mockMvc.perform(post("/settings/tags/add")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(tagForm))
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().isOk());
+		
+		Tag byTitle = tagService.findByTitle(title);
+		assertNotNull(byTitle);
+		
+		Account byNickname = accountService.findByNickname("testNickname");
+		assertTrue(byNickname.getTags().contains(byTitle));
+	}
+	
+	@WithAccount(value = "testNickname")
+	@DisplayName("태그 삭제 실패 확인")
+	@Test
+	public void removeTagsFailCheck() throws Exception {
+		String title = "TDD";
+		TagForm tagForm = TagForm.builder().title(title).build();
+		
+		mockMvc.perform(post("/settings/tags/remove")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(tagForm))
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+	}
+
+	@WithAccount(value = "testNickname")
+	@DisplayName("태그 삭제 성공 확인")
+	@Test
+	public void removeTagsSuccessCheck() throws Exception {
+		String title = "TDD";
+		TagForm tagForm = TagForm.builder().title(title).build();
+		tagService.save(tagForm);
+		
+		mockMvc.perform(post("/settings/tags/remove")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(tagForm))
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().isOk());
+		
+		Account account = accountService.findByNickname("testNickname");
+		assertFalse(account.getTags().contains(title));
+	}
+
+	@WithAccount(value = "testNickname")
+	@DisplayName("지역 폼 확인")
+	@Test
+	public void zoneFormCheck() throws Exception {
+		mockMvc.perform(get("/settings/zones"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("zones"))
+				.andExpect(model().attributeExists("whitelist"))
+				.andExpect(model().attributeExists("account"))
+				.andExpect(view().name("settings/zones"));
+	}
+	
+	@WithAccount(value = "testNickname")
+	@DisplayName("지역 정보 입력 성공 확인")
+	@Test
+	public void addZoneSuccsesCheck() throws Exception {
+		List<Zone> zones = zoneRepository.findAll();
+		ZoneForm zoneForm = ZoneForm.builder()
+								.fullCity(zones.get(0).toString()).build();
+								
+		mockMvc.perform(post("/settings/zones/add")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(zoneForm))
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().isOk());
+		
+		Zone byCity = zoneService.findByCity(zoneForm);
+		assertNotNull(byCity.getCity());
+		
+		Account byNickname = accountService.findByNickname("testNickname");
+		assertTrue(byNickname.getZones().contains(byCity));
+	}
+	
+	@WithAccount(value = "testNickname")
+	@DisplayName("지역 정보 삭제 성공 확인")
+	@Test
+	public void removeZoneSuccessCheck() throws Exception {
+		Account account = accountService.findByNickname("testNickname");
+		Zone zone = zoneRepository.findAll().get(0);
+		account.addZone(zone);
+		
+		ZoneForm zoneForm = ZoneForm.builder().fullCity(zone.toString()).build();
+		
+		mockMvc.perform(post("/settings/zones/remove")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(zoneForm))
+						.with(csrf()))
+				.andDo(print())
+				.andExpect(status().isOk());
+				
+		assertFalse(account.getZones().contains(zone));
+	}
 }

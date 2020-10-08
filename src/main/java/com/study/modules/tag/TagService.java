@@ -25,6 +25,9 @@ public class TagService {
 		return tagRepository.findByTitle(tagForm.getTitle()).orElseGet(Tag :: new);
 	}
 	
-	
+	public Tag findByTitle(String title) {
+		return tagRepository.findByTitle(title).orElseThrow(
+				()-> new IllegalArgumentException(title +"에 해당하는 Tag가 존재하지 않습니다."));
+	}
 
 }
