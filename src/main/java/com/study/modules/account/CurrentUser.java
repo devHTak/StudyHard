@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.PARAMETER)
+@Target(ElementType.PARAMETER)
 @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : account")
 public @interface CurrentUser {
 

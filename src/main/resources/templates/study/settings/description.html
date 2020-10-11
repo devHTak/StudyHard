@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div th:if="${!#strings.isEmpty(emailMessage)}" class="alert alert-primary mb-1" role="alert" th:text="${emailMessage}"></div>
+	<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}"> 
+		이메일 인증을 완료하지 않았습니다. 이메일을 확인하세요. <a href="#" th:href="@{'/resend-email/' + ${account.nickname}}">인증 이메일 재전송</a>
+	</div>
+	<div class="container">
+		<div th:replace="fragments.html :: study-banner"></div>
+		<div th:replace="fragments.html :: study-info"></div>
+		<div th:insert="fragments.html :: study-menu(menuName='manager')"></div>
+		<div class="row mt-5 justify-content-center">
+			<div th:replace="fragments.html :: study-settings-menu(currentMenu= 'description')"></div>
+			<div class="col-8">
+				<div class="alert alert-primary" role="alert" th:if="${ !#strings.isEmpty(updateMessage) }" th:text="${updateMessage}"></div>
+				<h2>스터디 소개 수정</h2> <hr style="width:100%;" />
+				<form class="needs-validation mt-5" action="#" th:action="@{'/study/' + ${study.getEncodePath()} +'/settings/description' }" th:object="${descriptionForm}" method="post" novalidate>
+	                <div class="form-group">
+	                	<label for="shortDescription">한 줄 설명</label>
+	                	<textarea id="shortDescription" style="height:100px;" name="shortDescription" th:field="*{shortDescription}" class="form-control" aria-describedby="shortDescriptionHelper" maxlength="100" required></textarea>
+	                	<small id="shortDescriptionHelper" class="form-text text-muted">
+	                		스터디 이름과 함께 소개될 짧은 설명을 100자 이내로 작성해주세요.
+	                	</small>
+	                	<small id="shortDescriptionError" class="form-text text-danger" th:if="${#fields.hasErrors('shortDescription')}" th:errors="*{shortDescription}">Errors</small>
+	                </div>
+	                <div class="form-group">
+	                	<label for="fullDescription">한 줄 설명</label>
+	                	<textarea id="fullDescription" style="height:100px;" name="fullDescription" th:field="*{fullDescription}" class="form-control editor" aria-describedby="fullDescriptionHelper" maxlength="100" required></textarea>
+	                	<small id="fullDescriptionHelper" class="form-text text-muted">
+	                		스터디에 대한 설명을 상세하게 작성해주세요.
+	                	</small>
+	                	<small id="fullDescriptionError" class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}">Errors</small>
+	                </div>
+	                <div class="form-group">
+	                	<button class="btn btn-primary btn-block mb-5" type="submit" aria-describedby="submitHelp">수정하기</button>
+	                </div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+	<script th:replace="fragments.html :: form-validation"></script>
+	<script src="/node_modules/summernote/dist/summernote-bs4.js"></script>
+	<script th:replace="fragments.html :: editor-script"></script>
+	<script th:replace="fragments.html :: tooltip"></script>
+</body>
+</html>

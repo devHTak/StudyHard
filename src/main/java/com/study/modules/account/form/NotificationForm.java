@@ -1,5 +1,7 @@
 package com.study.modules.account.form;
 
+import com.study.modules.account.Account;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +20,14 @@ public class NotificationForm {
 	private boolean studyEnrollmentResultByWeb;
 	private boolean studyUpdatedByEmail;
 	private boolean studyUpdatedByWeb;
+	
+	public NotificationForm(Account account) {
+		this.setStudyCreatedByEmail(account.isStudyCreatedByEmail());
+		this.setStudyCreatedByWeb(account.isStudyCreatedByWeb());
+		this.setStudyEnrollmentResultByEmail(account.isStudyEnrollmentResultByEmail());
+		this.setStudyEnrollmentResultByWeb(account.isStudyEnrollmentResultByWeb());
+		this.setStudyUpdatedByEmail(account.isStudyUpdatedByEmail());
+		this.setStudyUpdatedByWeb(account.isStudyUpdatedByWeb());
+	}
 
 }

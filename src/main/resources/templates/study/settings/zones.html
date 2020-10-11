@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div th:if="${!#strings.isEmpty(emailMessage)}" class="alert alert-primary mb-1" role="alert" th:text="${emailMessage}"></div>
+	<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}"> 
+		이메일 인증을 완료하지 않았습니다. 이메일을 확인하세요. <a href="#" th:href="@{'/resend-email/' + ${account.nickname}}">인증 이메일 재전송</a>
+	</div>
+	<div class="container">
+		<div th:replace="fragments.html :: study-banner"></div>
+		<div th:replace="fragments.html :: study-info"></div>
+		<div th:insert="fragments.html :: study-menu(menuName='manager')"></div>
+		<div class="row mt-5 justify-content-center">
+			<div th:replace="fragments.html :: study-settings-menu(currentMenu= 'zones')"></div>
+			<div class="col-8">
+				<h2>스터디 활동 지역</h2> <hr style="width:100%;" />
+				<div class="row mt-5">
+					<div class="col-12">
+						<div class="alert alert-primary" role="alert">
+							스터디 모임 주요 활동 지역을 입력해주세요.
+						</div>
+						<input type="hidden" id="path" th:value="${study.getEncodePath()}">
+						<div id="whitelist" th:text="${whitelist}" hidden></div> 
+						<input type="text" id="zones" name="zones" th:value="${#strings.listJoin(zones, ',')}" class="tagify-outside" aria-describedby="zonesHelp" />
+	                </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+	<script th:replace="fragments.html :: tooltip"></script>
+	<script type="application/javascript" th:inline="javascript">
+	    $(function() {
+	        var csrfToken = /*[[${_csrf.token}]]*/ null;
+	        var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
+	        $(document).ajaxSend(function (e, xhr, options) {
+	            xhr.setRequestHeader(csrfHeader, csrfToken);
+	        });
+	    });
+	</script>
+	<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+	<script type="application/javascript">
+		$(function() {
+			
+			function ajaxTagify(url, fullCity) {				
+				$.ajax({
+					dataType: 'json',
+					autocomplete: {
+						enabled: true,
+						rightKey: true
+					},
+					contentType: 'application/json;charset=utf-8',
+					method: "post",
+					url: "/study/" + $('#path').val() +"/settings/zones" + url,
+					data: JSON.stringify({'fullCity': fullCity})
+				}).done(function(data, status){
+					console.log("${data} and status is ${status}")
+				});
+			}
+			
+			function onAdd(e) {
+				ajaxTagify('/add', e.detail.data.value);
+			}
+			
+			function onRemove(e) {
+				ajaxTagify('/remove', e.detail.data.value);
+			}
+			
+			var zoneInput = document.querySelector('#zones');
+			var whitelist = JSON.parse(document.getElementById('whitelist').innerText);
+			
+			// init Tagify script on the above inputs
+			var tagify = new Tagify(zoneInput, {
+				whitelist: whitelist,
+				dropdown: {
+					enabled: 1, //suggest tags after a single character input
+				} 
+			})
+			
+			tagify.on('add', onAdd);
+			tagify.on('remove', onRemove);
+			
+			tagify.DOM.input.classList.add('form-control');
+			tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+		});
+	</script>
+</body>
+</html>

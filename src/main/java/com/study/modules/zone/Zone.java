@@ -33,7 +33,7 @@ public class Zone {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return this.city + " / " + this.localNameCity + "(" + this.province +")";
+		return String.format("%s(%s)/%s", city, localNameCity, province);
 	}
 	
 	

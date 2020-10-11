@@ -15,15 +15,15 @@ public class ZoneForm {
 	private String fullCity;
 	
 	public String getCity() {
-		return this.fullCity.substring(0, this.fullCity.indexOf("/")).trim();
+		return fullCity.indexOf("(") >= 0 ? fullCity.substring(0, fullCity.indexOf("(")) : fullCity;
+	}
+	
+	public String getProvinceName() {
+		return fullCity.indexOf("(") >= 0 ? fullCity.substring(fullCity.indexOf("/") + 1) : fullCity;
 	}
 	
 	public String getLocalNameCity() {
-		return this.fullCity.substring(this.fullCity.indexOf("/") + 1, this.fullCity.indexOf("(")).trim();
-	}
-	
-	public String getProvince() {
-		return this.fullCity.substring(this.fullCity.indexOf("(") + 1, this.fullCity.indexOf(")")).trim();
+		return fullCity.indexOf("(") >= 0 ? fullCity.substring(fullCity.indexOf("(") + 1, fullCity.indexOf(")")) : fullCity;
 	}
 
 }

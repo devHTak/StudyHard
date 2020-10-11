@@ -23,29 +23,25 @@
 							<label for="bio">한 줄 소개</label>
 							<input type="text" placeholder="간략한 소개를 부탁합니다." id="bio" name="bio" th:field="*{bio}" class="form-control"
 								aira-describedby="bioHelper" minlength="2" maxlength="30">
-							<small id="bioHelper" class="form-text text-muted">30자 이내로 간략한 소개를 입력하세요.</small>
-							<small id="bioError" class="form-text text-danger" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}">error</small> 
+							<small id="bioHelper" class="form-text text-muted">30자 이내로 간략한 소개를 입력하세요.</small> 
 						</div>
 						<div class="form-group">
 							<label for="url">링크</label>
 							<input type="text" placeholder="https://www.studyhard.com" id="url" name="url" th:field="*{url}" class="form-control"
 								aira-describedby="urlHelper">
 							<small id="urlHelper" class="form-text text-muted">블로그, 유투브, 깃허브 주소 등 자신을 소개할 수 있는 주소를 입력해주세요.</small>
-							<small id="urlError" class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}">error</small>
 						</div>
 						<div class="form-group">
 							<label for="occupation">한 줄 소개</label>
 							<input type="text" placeholder="학생, 개발자, 기획자 등" id="occupation" name="occupation" th:field="*{occupation}" class="form-control"
 								aira-describedby="occupationHelper" minlength="2" maxlength="30">
 							<small id="occupationHelper" class="form-text text-muted">학생, 개발자 등 직업을 입력하세요.</small>
-							<small id="occupationError" class="form-text text-danger" th:if="${#fields.hasErrors('occupation')}" th:errors="*{occupation}">error</small>
 						</div>
 						<div class="form-group">
 							<label for="location">활동지역</label>
 							<input type="text" placeholder="간략한 소개를 부탁합니다." id="location" name="location" th:field="*{location}" class="form-control"
 								aira-describedby="locationHelper" minlength="2" maxlength="30">
 							<small id="locationHelper" class="form-text text-muted">30자 이내로 간략한 소개를 입력하세요.</small>
-							<small id="locationError" class="form-text text-danger" th:if="${#fields.hasErrors('location')}" th:errors="${location}">error</small>
 						</div>
 						<div class="form-group">
 							<input type="hidden" th:field="*{profileImage}" id="profileImage" name="profileImage" class="form-control">
@@ -63,7 +59,7 @@
 							    	<svg th:if="${#strings.isEmpty(account.profileImage)}" class="rounded"
 	                                     th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>
 	                                <img th:if="${!#strings.isEmpty(account.profileImage)}" class="rounded" id="oldImage"
-	                                     th:src="${account.profileImage}" width="125" height="125" alt="name" th:alt="${account.nickname}"/>
+	                                     th:src="${account.profileImage}" width="125" height="125" alt="name" th:alt="${account.nickname}">
 	                            </div>
                                 <div class="custom-file mt-3">
                                     <input type="file" class="custom-file-input" id="profileImage">
