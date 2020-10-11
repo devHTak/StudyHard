@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div th:if="${!#strings.isEmpty(emailMessage)}" class="alert alert-primary mb-1" role="alert" th:text="${emailMessage}"></div>
+	<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}"> 
+		이메일 인증을 완료하지 않았습니다. 이메일을 확인하세요. <a href="#" th:href="@{'/resend-email/' + ${account.nickname}}">인증 이메일 재전송</a>
+	</div>
+	<div class="container">
+		<div th:replace="fragments.html :: study-banner"></div>
+		<div th:replace="fragments.html :: study-info"></div>
+		<div th:insert="fragments.html :: study-menu(menuName='manager')"></div>
+		<div class="row mt-5 justify-content-center">
+			<div th:replace="fragments.html :: study-settings-menu(currentMenu= 'banner')"></div>
+			<div class="col-8">
+				<div class="alert alert-primary" role="alert" th:if="${ !#strings.isEmpty(updateMessage) }" th:text="${updateMessage}"></div>
+				<h2>배너 이미지 사용</h2> <hr style="width:100%;" />
+				<form action="#" th:action="@{'/study/' + ${study.getEncodePath()} + '/settings/useBanner'}" method="post">
+					<div th:if="${!study.useBanner}" class="alert alert-primary" role="alert">
+						스터디 메뉴에서 스터디 배너 이미지를 사용합니다. 스터디 배너 이미지를 아직 설정하지 않았다면 기본 배너 이미지를 사용합니다.
+						<input type="hidden" name="useBanner" id="useBanner" value="true" />
+					</div>
+					<div th:if="${study.useBanner}" class="alert alert-warning" role="alert">
+						스터디 메뉴에서 스터디 배너 이미지를 사용하지 않습니다. 스터디 배너 이미지를 아직 설정하지 않았다면 기본 배너 이미지를 사용합니다.
+						<input type="hidden" name="useBanner" id="useBanner" value="false" />
+					</div>
+					<div class="form-group">
+	                	<button th:if="${!study.useBanner}" class="btn btn-primary btn-block mb-5" type="submit" aria-describedby="submitHelp">배너 이미지 사용하기</button>
+	                	<button th:if="${study.useBanner}" class="btn btn-warning btn-block mb-5" type="submit" aria-describedby="submitHelp">배너 이미지 사용하지 않기</button>
+	                </div>
+				</form>
+				<div th:if="${ study.useBanner }">
+					<hr style="width: 100%;" />
+					<form action="#" th:action="@{'/study/' + ${study.getEncodePath()} + '/settings/banner'}" method="post">
+						<div class="card text-center">
+						  	<div class="card-header">배너 이미지 수정</div>
+						  	<div class="card-body mt-3">
+						  		<div id="newImage"></div>
+						  		<div id="oldImage">
+							    	<img th:if="${!#strings.isEmpty(study.image)}" class="rounded" th:src="${study.image}" height="125" alt="image">
+							    	<img th:if="${#strings.isEmpty(study.image)}" src="/images/default-banner.jpg" width="100%" height="125">
+	                            </div>
+                                <div class="custom-file mt-3">
+                                	<input type="hidden" id="bannerImage" name="bannerImage">
+                                    <input type="file" class="custom-file-input">
+                                    <label class="custom-file-label" for="profile-image-file">배너 이미지 변경</label>
+                                </div>
+						  	</div>
+						</div>
+						<div class="form-group">
+		                	<button class="btn btn-primary btn-block mb-5" type="submit" aria-describedby="submitHelp">배너 이미지 변경</button>
+		                </div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+	<script th:replace="fragments.html :: form-validation"></script>
+	<script th:replace="fragments.html :: tooltip"></script>
+	<script type="application/javascript">
+		$(function(){
+			$('input[type=file]').change(function(e){
+				if(e.target.files.length === 1) {
+					var reader = new FileReader();
+					reader.onload = e => {
+						if(e.target.result) {
+							if(!e.target.result.startsWith("data:image")) {
+								alert('이미지 파일을 선택하세요.');
+								return;
+							}
+							// 가져온 이미지 생성
+							var img = document.createElement('img');
+							img.id = 'new-profile-image';
+							img.src = e.target.result;
+							img.setAttribute('width', '100%');
+							
+							$('#newImage').html(img);
+							$('#newImage').show();
+							$('#oldImage').hide();
+							$('#bannerImage').val(e.target.result);
+						}
+					};
+					reader.readAsDataURL(e.target.files[0]);
+				}
+			})
+		});
+	</script>
+</body>
+</html>

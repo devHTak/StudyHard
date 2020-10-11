@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,7 +55,7 @@ public class SettingsController {
 	@GetMapping("/profile")
 	public String getProfileForm(@CurrentUser Account account, Model model) {
 		model.addAttribute(account);
-		model.addAttribute(new ProfileForm());
+		model.addAttribute(new ProfileForm(account));
 		
 		return "settings/profile";
 	}
@@ -96,7 +95,7 @@ public class SettingsController {
 	@GetMapping("/notification")
 	public String getNotificationForm(@CurrentUser Account account, Model model) {
 		model.addAttribute(account);
-		model.addAttribute(new NotificationForm());
+		model.addAttribute(new NotificationForm(account));
 		
 		return "settings/notification";
 	}
@@ -116,7 +115,7 @@ public class SettingsController {
 	@GetMapping("/account")
 	public String getNicknameForm(@CurrentUser Account account, Model model) {
 		model.addAttribute(account);
-		model.addAttribute(new NicknameForm());
+		model.addAttribute(new NicknameForm(account));
 		
 		return "settings/account";
 	}

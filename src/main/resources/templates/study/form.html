@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"><meta charset="UTF-8"></head>
+<body>
+	<nav th:replace="fragments.html :: main-nav"></nav>
+	<div th:if="${!#strings.isEmpty(emailMessage)}" class="alert alert-primary mb-1" role="alert" th:text="${emailMessage}"></div>
+	<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}"> 
+		이메일 인증을 완료하지 않았습니다. 이메일을 확인하세요. <a href="#" th:href="@{'/resend-email/' + ${account.nickname}}">인증 이메일 재전송</a>
+	</div>
+	<div class="container">
+		<div class="row mt-5 justify-content-center">
+			<h2>스터디 개설</h2>
+		</div>
+		<div class="row mt-5 justify-content-center">
+			<form class="needs-validation col-sm-8" action="#" th:action="@{/study/new-study}" th:object="${studyForm}" method="post" novalidate>
+                <div class="form-group">
+                    <label for="path">스터디 URL</label>
+                    <input id="path" name="path" type="text" th:field="*{path}" class="form-control" aria-describedby="pathHelper" placeholder="study-path" minlength="2" maxlength="20" required>
+                    <small id="pathHelper" class="form-text text-muted">
+			                       공백없이 문자, 숫자, 대시(-)와 언더바(_)만 2자 이상 20자 이내로 입력하세요.<br>
+			                       스터디 홈주소로 사용합니다. ex) /study/study-path
+                    </small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('path')}" th:errors="*{path}">Errors</small>
+                </div>
+                <div class="form-group">
+                	<label for="title">스터디 제목</label>
+                	<input type="text" id="title" name="title" th:field="*{title}" class="form-control" aria-describedby="titleHelper" placeholder="스터디 이름" maxlength="50" required>
+                	<small id="titleHelper" class="form-text text-muted">
+                		50자 이내로 작성해주세요.
+                	</small>
+                	<small id="titleError" class="form-text text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Errors</small>
+                </div>
+                <div class="form-group">
+                	<label for="shortDescription">한 줄 설명</label>
+                	<textarea id="shortDescription" style="height:100px;" name="shortDescription" th:field="*{shortDescription}" class="form-control" aria-describedby="shortDescriptionHelper" maxlength="100" required></textarea>
+                	<small id="shortDescriptionHelper" class="form-text text-muted">
+                		스터디 이름과 함께 소개될 짧은 설명을 100자 이내로 작성해주세요.
+                	</small>
+                	<small id="shortDescriptionError" class="form-text text-danger" th:if="${#fields.hasErrors('shortDescription')}" th:errors="*{shortDescription}">Errors</small>
+                </div>
+                <div class="form-group">
+                	<label for="fullDescription">설명 상세</label>
+                	<textarea id="fullDescription" style="height:100px;" name="fullDescription" th:field="*{fullDescription}" class="form-control editor" aria-describedby="fullDescriptionHelper" maxlength="100" required></textarea>
+                	<small id="fullDescriptionHelper" class="form-text text-muted">
+                		스터디에 대한 설명을 상세하게 작성해주세요.
+                	</small>
+                	<small id="fullDescriptionError" class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}">Errors</small>
+                </div>
+                <div class="form-group">
+                	<button class="btn btn-primary btn-block mb-5" type="submit" aria-describedby="submitHelp">스터디 만들기</button>
+                </div>
+			</form>
+		</div>
+	</div>
+	
+	<footer th:replace="fragments.html :: footer"></footer>
+	<script th:replace="fragments.html :: form-validation"></script>
+	<script src="/node_modules/summernote/dist/summernote-bs4.js"></script>
+	<script th:replace="fragments.html :: editor-script"></script>
+	
+</body>
+</html>

@@ -1,9 +1,5 @@
 package com.study.modules.account;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +8,6 @@ import com.study.modules.account.form.NicknameForm;
 import com.study.modules.account.form.NotificationForm;
 import com.study.modules.account.form.PasswordForm;
 import com.study.modules.account.form.ProfileForm;
-import com.study.modules.tag.Tag;
-import com.study.modules.tag.TagRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,49 +17,40 @@ import lombok.RequiredArgsConstructor;
 public class SettingsService {
 
 	private final AccountRepository accountRepository;
+	private final AccountService accountService;
 	private final PasswordEncoder passwordEncoder;
 	
 	public Account updateProfile(Account account, ProfileForm profileForm) {
-		Account byId = this.findById(account);
+		account.setBio(profileForm.getBio());
+		account.setUrl(profileForm.getUrl());
+		account.setLocation(profileForm.getLocation());
+		account.setOccupation(profileForm.getOccupation());
+		account.setProfileImage(profileForm.getProfileImage());
 		
-		byId.setBio(profileForm.getBio());
-		byId.setUrl(profileForm.getUrl());
-		byId.setLocation(profileForm.getLocation());
-		byId.setOccupation(profileForm.getOccupation());
-		byId.setProfileImage(profileForm.getProfileImage());
-		
-		return byId;
+		return accountRepository.save(account);
 	}
 	
 	public Account updatePassword(Account account, PasswordForm passwordForm) {
-		Account byId = this.findById(account);
-		byId.setPassword(passwordEncoder.encode(passwordForm.getPassword()));
+		account.setPassword(passwordEncoder.encode(passwordForm.getPassword()));
 		
-		return byId;
+		return accountRepository.save(account);
 	}
 	
 	public Account updateNotification(Account account, NotificationForm notificationForm) {
-		Account byId = this.findById(account);
+		account.setStudyCreatedByEmail(notificationForm.isStudyCreatedByEmail());
+		account.setStudyCreatedByWeb(notificationForm.isStudyCreatedByWeb());
+		account.setStudyEnrollmentResultByEmail(notificationForm.isStudyEnrollmentResultByEmail());
+		account.setStudyEnrollmentResultByWeb(notificationForm.isStudyEnrollmentResultByWeb());
+		account.setStudyUpdatedByWeb(notificationForm.isStudyUpdatedByWeb());
+		account.setStudyUpdatedByEmail(notificationForm.isStudyUpdatedByEmail());
 		
-		byId.setStudyCreatedByEmail(notificationForm.isStudyCreatedByEmail());
-		byId.setStudyCreatedByWeb(notificationForm.isStudyCreatedByWeb());
-		byId.setStudyEnrollmentResultByEmail(notificationForm.isStudyEnrollmentResultByEmail());
-		byId.setStudyEnrollmentResultByWeb(notificationForm.isStudyEnrollmentResultByWeb());
-		byId.setStudyUpdatedByWeb(notificationForm.isStudyUpdatedByWeb());
-		byId.setStudyUpdatedByEmail(notificationForm.isStudyUpdatedByEmail());
-		
-		return byId;
+		return accountRepository.save(account);
 	}
 	
-	public Account updateNickname(Account account, @Valid NicknameForm nicknameForm) {
-		Account byId = this.findById(account);
-		byId.setNickname(nicknameForm.getNickname());
+	public Account updateNickname(Account account, NicknameForm nicknameForm) {
+		account.setNickname(nicknameForm.getNickname());
 		
-		return byId;
-	}
-	
-	private Account findById(Account account) {
-		return accountRepository.findById(account.getId())
-				.orElseThrow(()-> new IllegalArgumentException(account.getNickname()+"에 대한 계정을 찾을 수 없습니다."));
+		accountService.login(account);
+		return accountRepository.save(account);
 	}
 }
