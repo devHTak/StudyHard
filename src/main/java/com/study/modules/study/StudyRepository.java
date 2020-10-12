@@ -15,11 +15,19 @@ public interface StudyRepository extends JpaRepository<Study, Long>{
 	@EntityGraph(attributePaths = {"managers", "members", "tags", "zones"}, type = EntityGraphType.LOAD)
 	public Optional<Study> findByPath(String path);
 	
-	@EntityGraph(attributePaths = {"tags"}, type=EntityGraphType.LOAD)
-	public Optional<Study> findStudyWithTagsByPath(String path);
+	@EntityGraph(attributePaths = {"tags", "managers"}, type=EntityGraphType.LOAD)
+	public Optional<Study> findStudyWithTagsAndManagersByPath(String path);
 	
-	@EntityGraph(attributePaths = {"zones"}, type=EntityGraphType.LOAD)
-	public Optional<Study> findStudyWithZonesByPath(String path);
+	@EntityGraph(attributePaths = {"zones", "managers"}, type=EntityGraphType.LOAD)
+	public Optional<Study> findStudyWithZonesAndManagersByPath(String path);
+	
+	@EntityGraph(attributePaths = {"members", "managers"}, type=EntityGraphType.LOAD)
+	public Optional<Study> findStudyWithMembersAndManagersByPath(String path);
+	
+	@EntityGraph(attributePaths= {"managers"}, type=EntityGraphType.LOAD)
+	public Optional<Study> findStudyWithManagerByPath(String path);
 	
 	public Optional<Study> findOnlyStudyByPath(String path);
+	
+	public void deleteByPath(String path);
 }

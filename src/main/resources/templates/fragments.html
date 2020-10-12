@@ -118,21 +118,21 @@
 				<span sec:authorize="isAuthenticated()" th:if="${study.isJoinable(#authentication.principal)}"
 						class="btn-group" role="group">
 					<form action="#" method="post" th:action="@{'/study/' + ${study.path} + '/join'}">
-						<button class="btn btn-primary">스터디 가입</button>
-						<a class="btn btn-outline-primary" th:href="@{'/study/' + ${study.path} + '/members'}"
+						<button class="btn btn-primary btn-sm">스터디 가입</button>
+						<a class="btn btn-outline-primary btn-sm" th:href="@{'/study/' + ${study.path} + '/members'}"
 							th:text="${study.members.size()}">1</a>
 					</form>				
 				</span>
 				<span sec:authorize="isAuthenticated()" th:if="${!study.closed && study.isMembers(#authentication.principal)}"
 						class="btn-group" role="group">
 					<form action="#" method="post" th:action="@{'/study/' + ${study.path} + '/leave'}">
-						<button class="btn btn-warning">스터디 탈퇴</button>
-						<a class="btn btn-outline-primary" th:href="@{'/study/' + ${study.path} +'/members'}"
+						<button class="btn btn-warning btn-sm">스터디 탈퇴</button>
+						<a class="btn btn-outline-primary btn-sm" th:href="@{'/study/' + ${study.path} +'/members'}"
 							th:text="${study.members.size()}">1</a>						
 					</form>
 				</span>
 				<span sec:authorize="isAuthenticated()" th:if="${study.published && !study.closed && study.isManagers(#authentication.principal)}">
-					<a class="btn btn-outline-primary" th:href="@{'/study/' + ${study.path} + '/new-event'}">
+					<a class="btn btn-outline-primary btn-sm" th:href="@{'/study/' + ${study.path} + '/new-event'}">
 						<i class="fa fa-plus"></i> 모임 만들기
 					</a>		
 				</span>
