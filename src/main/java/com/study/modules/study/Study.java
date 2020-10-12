@@ -63,6 +63,8 @@ public class Study {
 	@Default @Basic(fetch = FetchType.LAZY)
 	private Set<Tag> tags = new HashSet<>();
 	
+	private LocalDateTime createdDateTime;
+	
 	private boolean published;
 	private LocalDateTime publishedDateTime;
 	
@@ -95,6 +97,18 @@ public class Study {
 		}
 	}
 	
+	public void addMember(Account account) {
+		if(!this.members.contains(account)) {
+			this.members.add(account);
+		}
+	}
+	
+	public void removeMember(Account account) {
+		if(!this.members.contains(account)) {
+			this.members.remove(account);
+		}
+	}
+	
 	public boolean isManagers(UserAccount userAccount) {
 		Account account = userAccount.getAccount();
 		return this.managers.contains(account);
@@ -111,19 +125,7 @@ public class Study {
 	}
 	
 	
-	public boolean isDraft() {
-		return !this.published && !this.closed && !this.recruiting;
-	}
-	
-	public boolean isOpened() {
-		return this.published && !this.closed;
-	}
-	
-	public boolean isRecruited() {
-		return this.published && !this.recruiting && !this.closed;
-	}
-	
-	public boolean isClosed() {
-		return this.published && !this.closed && this.recruiting;
+	public boolean isRemovable() {
+		return !this.isPublished();
 	}
 }

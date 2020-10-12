@@ -1,10 +1,11 @@
-package com.study.modules.study.form;
+package com.study.modules.study.validator;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import com.study.modules.study.StudyService;
+import com.study.modules.study.form.StudyForm;
 
 import lombok.RequiredArgsConstructor;
 

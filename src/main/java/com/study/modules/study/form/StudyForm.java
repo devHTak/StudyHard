@@ -1,6 +1,5 @@
 package com.study.modules.study.form;
 
-import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
