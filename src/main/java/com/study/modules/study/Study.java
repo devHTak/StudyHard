@@ -104,7 +104,7 @@ public class Study {
 	}
 	
 	public void removeMember(Account account) {
-		if(!this.members.contains(account)) {
+		if(this.members.contains(account)) {
 			this.members.remove(account);
 		}
 	}
