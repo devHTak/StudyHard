@@ -157,7 +157,6 @@ public class StudySettingsController {
 		Study study = studyService.getStudyWithZonesToUpdate(path, account);
 		Zone zone = zoneService.findByCity(zoneForm);
 		if(zone.getCity() == null || zone.getCity().equals("")) {
-			System.out.println("HELLO");
 			return ResponseEntity.badRequest().build();
 		}
 		studyService.addZone(study, zone);
@@ -170,12 +169,10 @@ public class StudySettingsController {
 		Study study = studyService.getStudyWithZonesToUpdate(path, account);
 		Zone zone= zoneService.findByCity(zoneForm);
 		if(zone.getCity() == null || zone.getCity().equals("")) {
-			System.out.println("HELLOA");
 			return ResponseEntity.badRequest().build();
 		}
-			
-		studyService.removeZone(study, zone);
 		
+		studyService.removeZone(study, zone);
 		return ResponseEntity.ok().build();
 	}
 	

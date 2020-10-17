@@ -147,7 +147,7 @@ public class StudyControllerTest {
 	}
 	
 	@WithAccount("testNickname")
-	@DisplayName("스터디 회원 조회 - 성공")
+	@DisplayName("스터디 회원 등록 - 성공")
 	@Test
 	public void joinStudyMembersTest() throws Exception {
 		Study study = this.insertStudyToMember("test-study");
