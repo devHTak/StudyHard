@@ -11,10 +11,7 @@ import com.study.modules.study.form.PathForm;
 import com.study.modules.study.form.StudyForm;
 import com.study.modules.study.form.TitleForm;
 import com.study.modules.tag.Tag;
-import com.study.modules.tag.TagForm;
-import com.study.modules.tag.TagRepository;
 import com.study.modules.zone.Zone;
-import com.study.modules.zone.ZoneRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudyService {
 	private final StudyRepository studyRepository;
-	private final TagRepository tagRepository;
-	private final ZoneRepository zoneRepository;
 	
 	public boolean existsByPath(String path) {
 		return studyRepository.existsByPath(path);
@@ -40,6 +35,10 @@ public class StudyService {
 		study.addManager(account);
 		
 		return studyRepository.save(study);
+	}
+	
+	public Study getOnlyStudyByPath(String path) {
+		return studyRepository.findOnlyStudyByPath(path).orElseThrow(() -> new IllegalArgumentException(path +"에 해당하는 스터디가 없습니다."));
 	}
 	
 	public Study getStudyByPath(String path) {
