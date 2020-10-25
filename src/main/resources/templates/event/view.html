@@ -101,7 +101,7 @@
                         </thead>
                         <tbody>
                             <tr th:each="enroll, idx: ${event.enrollments}">
-                                <th scope="row" th:text="${idx}"></th>
+                                <th scope="row" th:text="${idx.count}"></th>
                                 <td>
                                     <a th:href="@{'/profile/' + ${enroll.account.nickname}}"
                                        class="text-decoration-none">
@@ -119,7 +119,7 @@
                                     <span th:if="${enroll.accepted}">확정</span>
                                     <span th:if="${!enroll.accepted}">대기중</span>
                                 </td>
-                                <td th:if="${study.isManager(#authentication.principal)}">
+                                <td th:if="${study.isManagers(#authentication.principal)}">
                                 	<form action="#" th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/accept'}" method="post">
                                	    	<button th:if="${event.canAccept(enroll)}" href="#" class="btn btn-outline-primary btn-sm">신청 수락</button>
                                	    </form>
@@ -127,12 +127,12 @@
                                     	<button th:if="${event.canReject(enroll)}" href="#" class="btn btn-outline-warning btn-sm">취소</button>
                                     </form>
                                 </td>
-                                <td th:if="${study.isManager(#authentication.principal)}">
-                                	<form action="#" th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/checkin'}" method="post">
-                                		<button th:if="${enroll.accepted && !enroll.attend}" href="#" class="btn btn-outline-primary btn-sm">체크인</button>
+                                <td th:if="${study.isManagers(#authentication.principal)}">
+                                	<form action="#" th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/check-in'}" method="post">
+                                		<button th:if="${enroll.accepted && !enroll.attended}" href="#" class="btn btn-outline-primary btn-sm">체크인</button>
                                 	</form>
-                                	<form action="#" th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/cancel-checkin'}" method="post">
-                                    	<button th:if="${enroll.accepted && enroll.attend}" href="#" class="btn btn-outline-warning btn-sm">체크인 취소</button>
+                                	<form action="#" th:action="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/cancel-check-in'}" method="post">
+                                    	<button th:if="${enroll.accepted && enroll.attended}" href="#" class="btn btn-outline-warning btn-sm">체크인 취소</button>
                                     </form>                                    
                                 </td>
                             </tr>

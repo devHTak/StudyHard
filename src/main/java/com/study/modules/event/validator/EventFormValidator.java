@@ -53,7 +53,7 @@ public class EventFormValidator implements Validator {
 			errors.rejectValue("limitOfEnrollments", "wrong.limitOfEnrollments", "수정 전 모집인원보다 적을 수는 없습니다.");
 		}
 		
-		if(event.getEventType().equals(eventForm.getEventType())) {
+		if(!event.getEventType().equals(eventForm.getEventType())) {
 			errors.rejectValue("eventType", "wrong.eventType", "이벤트 타입을 변경할 수 없습니다.");
 		}
 	}

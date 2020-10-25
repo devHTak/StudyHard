@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class EventService {
 	
 	private final EventRepository eventRepository;
+	private final EnrollmentRepository enrollmentRepository;
 	
 	public Event addNewEvent(Account account, Study study, EventForm eventForm) {
 		Event event = Event.builder()
@@ -55,4 +56,63 @@ public class EventService {
 		eventRepository.delete(event);
 	}
 
+	public Enrollment enrollEvent(Event event, Account account) {
+		boolean accepted = false;
+		if( event.getEventType().equals(EventType.FCFS) && 
+				event.getEnrollments().stream().filter(Enrollment::isAccepted).count() < event.getLimitOfEnrollments()) {
+			accepted = true;
+		} 
+		
+		Enrollment enrollment = Enrollment.builder()
+				.account(account)
+				.enrolledAt(LocalDateTime.now())
+				.event(event)
+				.accepted(accepted)
+				.build();
+		
+		event.getEnrollments().add(enrollment);
+		
+		return enrollmentRepository.save(enrollment);		
+	}
+	
+	public void disenrollEvent(Event event, Account account) {
+		Enrollment enrollment = enrollmentRepository.findByAccountAndEvent(account, event)
+				.orElseThrow(()-> new IllegalArgumentException());
+		
+		if(!enrollment.isAttended()) {
+			event.getEnrollments().remove(enrollment);
+			
+			if(event.getEventType().equals(EventType.FCFS)) {
+				event.getEnrollments().forEach( e -> {
+					if(!e.isAttended()) {
+						e.setAccepted(true);
+						return;
+					}
+				});
+			}
+			
+			enrollmentRepository.delete(enrollment);
+		}
+	}
+	
+	public void acceptEnrollment(Event event, Enrollment enrollment) {
+		if(event.getEventType().equals(EventType.CONFIRMATIVE) && 
+				event.getEnrollments().stream().filter(Enrollment::isAttended).count() < event.getLimitOfEnrollments()) {			
+			enrollment.setAccepted(true);
+		}
+	}
+	
+	public void rejectEnrollment(Event event, Enrollment enrollment) {
+		if(event.getEventType().equals(EventType.CONFIRMATIVE)) {
+			enrollment.setAccepted(false);
+		}
+	}
+	
+	public void cancelCheckInEnrollment(Event event, Enrollment enrollment) {
+		enrollment.setAttended(false);
+	}
+	
+	public void checkInEnrollment(Event event, Enrollment enrollment) {
+		enrollment.setAttended(true);
+	}
 }

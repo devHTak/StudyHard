@@ -25,4 +25,5 @@ public interface AccountRepository extends JpaRepository<Account, Long>{
 	
 	@EntityGraph(attributePaths = {"tags", "zones"}, type=EntityGraphType.LOAD)
 	public Optional<Account> findById(Long id);
+	
 }

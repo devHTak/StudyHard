@@ -86,7 +86,7 @@ public class EventController {
 	@GetMapping("/events/{eventId}")
 	public String getEventView(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event, Model model) {
 		
-		Study study = studyService.getOnlyStudyByPath(path);
+		Study study = studyService.getStudyWithMembersAndManagersByPath(path);
 		model.addAttribute("account", account);
 		model.addAttribute("study", study);
 		model.addAttribute("event", event);
@@ -125,6 +125,54 @@ public class EventController {
 		eventService.delete(event);
 		
 		return "redirect:/study/" + study.getEncodePath() +"/events";
+	}
+	
+	@PostMapping("/events/{eventId}/enroll")
+	public String enrollEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event) {
+		Study study = studyService.getOnlyStudyByPath(path);
+		eventService.enrollEvent(event, account);
+		
+		return "redirect:/study/" + study.getEncodePath() + "/events/" + event.getId();
+	}
+	
+	@PostMapping("/events/{eventId}/disenroll")
+	public String disenrollEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event) {
+		Study study = studyService.getOnlyStudyByPath(path);
+		eventService.disenrollEvent(event, account);
+		
+		return "redirect:/study/" + study.getEncodePath() + "/events/" + event.getId();
+	}
+	
+	@PostMapping("/events/{eventId}/enrollments/{enrollmentId}/accept") 
+	public String acceptEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event, @PathVariable("enrollmentId") Enrollment enrollment) {
+		Study study = studyService.getOnlyStudyByPath(path);
+		eventService.acceptEnrollment(event, enrollment);
+		
+		return "redirect:/study/" + study.getEncodePath() + "/events/" + event.getId();
+	}
+	
+	@PostMapping("/events/{eventId}/enrollments/{enrollmentId}/reject")
+	public String rejectEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event, @PathVariable("enrollmentId") Enrollment enrollment) {
+		Study study = studyService.getOnlyStudyByPath(path);
+		eventService.rejectEnrollment(event, enrollment);
+		
+		return "redirect:/study/" + study.getEncodePath() + "/events/" + event.getId();
+	}
+	
+	@PostMapping("/events/{eventId}/enrollments/{enrollmentId}/check-in")
+	public String checkInEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event, @PathVariable("enrollmentId") Enrollment enrollment) {
+		Study study = studyService.getOnlyStudyByPath(path);
+		eventService.checkInEnrollment(event, enrollment);
+		
+		return "redirect:/study/" + study.getEncodePath() + "/events/" + event.getId();
+	}
+	
+	@PostMapping("/events/{eventId}/enrollments/{enrollmentId}/cancel-check-in")
+	public String cancelCheckInEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event, @PathVariable("enrollmentId") Enrollment enrollment) {
+		Study study = studyService.getOnlyStudyByPath(path);
+		eventService.cancelCheckInEnrollment(event, enrollment);
+		
+		return "redirect:/study/" + study.getEncodePath() + "/events/" + event.getId();
 	}
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import com.study.modules.account.Account;
 import com.study.modules.account.UserAccount;
@@ -59,6 +60,7 @@ public class Event {
 	private Integer limitOfEnrollments;
 	
 	@OneToMany(mappedBy = "event") @Builder.Default
+	@OrderBy("enrolledAt")
 	private List<Enrollment> enrollments = new ArrayList<>();
 	
 	@Enumerated(value = EnumType.STRING)
@@ -87,7 +89,7 @@ public class Event {
 	public boolean isAttended(Account account) {
 		
 		for(Enrollment enrollment : this.enrollments) {
-			if(enrollment.getAccount().equals(account) && enrollment.getAttended()) {
+			if(enrollment.getAccount().equals(account) && enrollment.isAttended()) {
 				return true;
 			}
 		}
@@ -108,6 +110,16 @@ public class Event {
 		}
 		
 		return false;
+	}
+	
+	public boolean canAccept(Enrollment enrollment) {
+		return this.eventType.equals(EventType.CONFIRMATIVE) && 
+				this.enrollments.stream().filter(Enrollment::isAttended).count() < this.limitOfEnrollments &&
+				!enrollment.isAccepted();
+	}
+	
+	public boolean canReject(Enrollment enrollment) {
+		return this.eventType.equals(EventType.CONFIRMATIVE) && enrollment.isAccepted();
 	}
 
 }
