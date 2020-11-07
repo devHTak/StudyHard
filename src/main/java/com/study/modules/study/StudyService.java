@@ -1,11 +1,19 @@
 package com.study.modules.study;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.study.modules.account.Account;
+import com.study.modules.study.event.StudyCreatedEvent;
+import com.study.modules.study.event.StudyUpdatedEvent;
 import com.study.modules.study.form.DescriptionForm;
 import com.study.modules.study.form.PathForm;
 import com.study.modules.study.form.StudyForm;
@@ -20,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudyService {
 	private final StudyRepository studyRepository;
+	private final ApplicationEventPublisher publisher;
 	
 	public boolean existsByPath(String path) {
 		return studyRepository.existsByPath(path);
@@ -51,6 +60,10 @@ public class StudyService {
 	
 	public Study getStudyWithTagsAndManagersByPath(String path) {
 		return studyRepository.findStudyWithTagsAndManagersByPath(path).orElseThrow(()->new IllegalArgumentException(path+"에 해당하는 스터디가 없습니다."));
+	}
+	
+	public Study getStudyWithZonesAndTagsById(Long id) {
+		return studyRepository.findStudyWithZonesAndTagsById(id).orElseThrow(()->new IllegalArgumentException(id+"에 해당하는 스터디가 없습니다."));
 	}
 	
 	public Study getStudyWithZonesAndManagersByPath(String path) {
@@ -98,6 +111,9 @@ public class StudyService {
 	public void updateDescription(Study study, DescriptionForm descriptionForm) {
 		study.setShortDescription(descriptionForm.getShortDescription());
 		study.setFullDescription(descriptionForm.getFullDescription());
+		
+		// studyUpdatedEvent 발생
+		publisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() +" 스터디 소개가 변경되었습니다."));
 	}
 	
 	public void updateUseBanner(Study study, boolean useBanner) {
@@ -136,7 +152,10 @@ public class StudyService {
 		study.setPublished(true);
 		study.setRecruiting(false);
 		study.setClosed(false);
-		study.setPublishedDateTime(LocalDateTime.now());	
+		study.setPublishedDateTime(LocalDateTime.now());
+		
+		// notification event(openStudy) publish
+		publisher.publishEvent(new StudyCreatedEvent(study));
 	}
 	
 	public void closeStudy(Study study) {
@@ -144,6 +163,9 @@ public class StudyService {
 		study.setRecruiting(false);
 		study.setClosed(true);
 		study.setClosedDateTime(LocalDateTime.now());
+		
+		// studyUpdatedEvent 발생
+		publisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() +" 스터디가 종료되었습니다."));
 	}
 	
 	public void recruiteStartStudy(Study study) {
@@ -151,12 +173,18 @@ public class StudyService {
 		study.setClosed(false);
 		study.setRecruiting(true);
 		study.setRecruitingUpdatedDateTime(LocalDateTime.now());
+		
+		// studyUpdatedEvent 발생
+		publisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() +" 스터디 모집이 시작되었습니다."));
 	}
 	
 	public void recruiteStopStudy(Study study) {
 		study.setPublished(true);
 		study.setClosed(false);
 		study.setRecruiting(false);
+		
+		// studyUpdatedEvent 발생
+		publisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() +" 스터디 모집이 종료되었습니다."));
 	}
 	
 	public void updateStudyPath(Study study, PathForm pathForm) {
@@ -182,4 +210,25 @@ public class StudyService {
 			study.removeMember(account);
 		}
 	}
+	
+	public Page<Study> searchStudyByKeywordAndPublished(String keyword, Pageable pageable) {
+		return studyRepository.findByKeyword(keyword, pageable);
+	}
+	
+	public List<Study> findTop5ByPublishedAndClosed(boolean published, boolean closed) {
+		return studyRepository.findTop5ByPublishedAndClosed(published, closed);
+	}
+	
+	public List<Study> findTop5ByManagersContainingAndClosedOrderByPublishedDateTime(Account account, boolean closed) {
+		return studyRepository.findTop5ByManagersContainingAndClosedOrderByPublishedDateTime(account, closed);
+	}
+	
+	public List<Study> findTop5ByMembersContainingAndClosedOrderByPublishedDateTime(Account account, boolean closed) {
+		return studyRepository.findTop5ByMembersContainingAndClosedOrderByPublishedDateTime(account, closed);
+	}
+	
+	public List<Study> findStudyByTagsAndZones(Set<Tag> tags, Set<Zone> zones) {
+		return studyRepository.findStudyByTagsAndZones(tags, zones);
+	}
+	
 }

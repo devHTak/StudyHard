@@ -190,7 +190,7 @@ public class StudySettingsController {
 	
 	@PostMapping("/study/open")
 	public String openStudy(@CurrentUser Account account, @PathVariable String path) {
-		Study study = studyService.getStudyWithManagerToUpdate(path, account);
+		Study study = studyService.getStudyToUpdate(path, account);
 		
 		studyService.openStudy(study);
 		return "redirect:/study/" + study.getEncodePath() +"/settings/study";

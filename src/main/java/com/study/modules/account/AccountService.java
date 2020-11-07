@@ -3,7 +3,7 @@ package com.study.modules.account;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -134,26 +134,26 @@ public class AccountService implements UserDetailsService{
 	}
 	
 	public void addTag(Account account, Tag tag) {
-		Account byId = this.findById(account);
+		Account byId = this.findAccountWithTagsAndZonesById(account);
 		byId.addTag(tag);
 	}
 
 	public void removeTag(Account account, Tag tag) {
-		Account byId = this.findById(account);
+		Account byId = this.findAccountWithTagsAndZonesById(account);
 		byId.removeTag(tag);
 	}
 
 	public void addZone(Account account, Zone zone) {
-		Account byId = this.findById(account);
+		Account byId = this.findAccountWithTagsAndZonesById(account);
 		byId.addZone(zone);		
 	}
 	
 	public void removeZone(Account account, Zone zone) {
-		Account byId = this.findById(account);
+		Account byId = this.findAccountWithTagsAndZonesById(account);
 		byId.removeZone(zone);
 	}
 	
-	private Account findById(Account account) {
-		return accountRepository.findById(account.getId()).orElseThrow(()-> new IllegalArgumentException());
+	public Account findAccountWithTagsAndZonesById(Account account) {
+		return accountRepository.findAccountWithTagsAndZonesById(account.getId()).orElseThrow(()-> new IllegalArgumentException());
 	}
 }

@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -472,5 +473,5 @@ public class StudySettingsControllerTest {
 		
 		Study byPath = studyRepository.findOnlyStudyByPath("test-study").orElse(null);
 		assertNull(byPath);
-	} 
+	}
 }

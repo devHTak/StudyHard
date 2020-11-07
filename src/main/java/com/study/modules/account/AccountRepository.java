@@ -1,13 +1,20 @@
 package com.study.modules.account;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.repository.query.Param;
+
+import com.study.modules.tag.Tag;
+import com.study.modules.zone.Zone;
 
 
-public interface AccountRepository extends JpaRepository<Account, Long>{
+public interface AccountRepository extends JpaRepository<Account, Long>, QuerydslPredicateExecutor<Account>{
 
 	public boolean existsByEmail(String email);
 	
@@ -24,6 +31,7 @@ public interface AccountRepository extends JpaRepository<Account, Long>{
 	public Account findAccountWithZonesById(Long id);
 	
 	@EntityGraph(attributePaths = {"tags", "zones"}, type=EntityGraphType.LOAD)
-	public Optional<Account> findById(Long id);
+	public Optional<Account> findAccountWithTagsAndZonesById(Long id);
+	
 	
 }

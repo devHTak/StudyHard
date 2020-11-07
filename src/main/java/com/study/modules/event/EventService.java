@@ -5,12 +5,16 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.study.modules.account.Account;
+import com.study.modules.event.event.EnrollmentAcceptEvent;
+import com.study.modules.event.event.EnrollmentRejectEvent;
 import com.study.modules.event.form.EventForm;
 import com.study.modules.study.Study;
+import com.study.modules.study.event.StudyUpdatedEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,7 @@ public class EventService {
 	
 	private final EventRepository eventRepository;
 	private final EnrollmentRepository enrollmentRepository;
+	private final ApplicationEventPublisher eventPublisher;
 	
 	public Event addNewEvent(Account account, Study study, EventForm eventForm) {
 		Event event = Event.builder()
@@ -35,6 +40,9 @@ public class EventService {
 				.title(eventForm.getTitle())
 				.limitOfEnrollments(eventForm.getLimitOfEnrollments()).build();
 		
+		// 모임 생성 이벤트 발생
+		eventPublisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() + " 스터디에 새로운 모임인 " + event.getTitle() +"이 생성되었습니다."));
+		
 		return eventRepository.save(event);
 	}
 	
@@ -42,7 +50,7 @@ public class EventService {
 		return eventRepository.findWithEnrollmentsByStudyOrderByStartDateTime(study);
 	}
 
-	public void updateEvent(Event event, @Valid EventForm eventForm) {
+	public void updateEvent(Study study, Event event, @Valid EventForm eventForm) {
 		event.setDescription(eventForm.getDescription());
 		event.setStartDateTime(eventForm.getStartDateTime());
 		event.setEndDateTime(eventForm.getEndDateTime());
@@ -50,10 +58,16 @@ public class EventService {
 		event.setEventType(eventForm.getEventType());
 		event.setTitle(eventForm.getTitle());
 		event.setLimitOfEnrollments(eventForm.getLimitOfEnrollments());
+		
+		// 모임 변경 이벤트 발생
+		eventPublisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() + " 스터디에 " + event.getTitle() +" 모임이 변경되었습니다."));
 	}
 
-	public void delete(Event event) {
+	public void delete(Study study, Event event) {
 		eventRepository.delete(event);
+		
+		// 모임 생성 이벤트 발생
+		eventPublisher.publishEvent(new StudyUpdatedEvent(study, study.getTitle() + " 스터디에 " + event.getTitle() +" 모임이 삭제되었습니다.."));
 	}
 
 	public Enrollment enrollEvent(Event event, Account account) {
@@ -99,12 +113,17 @@ public class EventService {
 		if(event.getEventType().equals(EventType.CONFIRMATIVE) && 
 				event.getEnrollments().stream().filter(Enrollment::isAttended).count() < event.getLimitOfEnrollments()) {			
 			enrollment.setAccepted(true);
+			
+			// 모임 생성 이벤트 발생
+			eventPublisher.publishEvent(new EnrollmentAcceptEvent(enrollment));
 		}
 	}
 	
 	public void rejectEnrollment(Event event, Enrollment enrollment) {
 		if(event.getEventType().equals(EventType.CONFIRMATIVE)) {
 			enrollment.setAccepted(false);
+			// 모임 생성 이벤트 발생
+			eventPublisher.publishEvent(new EnrollmentRejectEvent(enrollment));
 		}
 	}
 	
