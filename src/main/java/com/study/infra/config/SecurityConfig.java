@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
 		http.authorizeRequests()
-			.mvcMatchers("/", "/login", "/sign-up", "check-email-token", "email-login", "login-by-email")
+			.mvcMatchers("/", "/login", "/sign-up", "/check-email-token", "/email-login", "/login-by-email", "/search/study")
 			.permitAll()
 			.anyRequest().authenticated();
 		

@@ -115,14 +115,14 @@ public class EventController {
 			return "event/update-event";
 		}
 		
-		eventService.updateEvent(event, eventForm);
+		eventService.updateEvent(study, event, eventForm);
 		return "redirect:/study/" + study.getEncodePath() +"/events/" + event.getId();
 	}
 	
 	@DeleteMapping("/events/{eventId}")
 	public String deleteEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable("eventId") Event event) {
 		Study study = studyService.getOnlyStudyByPath(path);
-		eventService.delete(event);
+		eventService.delete(study, event);
 		
 		return "redirect:/study/" + study.getEncodePath() +"/events";
 	}
